@@ -1,4 +1,4 @@
-import os, sys, random, json
+import os, sys, random, json, getpass
 
 choices = ["rock","r","paper","p","scissors","s"]
 valid_choices = ["rock", "paper", "scissors"]
@@ -71,7 +71,7 @@ def game(mode, leaderboard):
             if player_name.strip():
                 break
             print("Name cannot be empty. Please try again.")
-        p1 = input(f"[{player_name}] Please choose Rock, Paper, Scissors (or r, p, s): ").lower()
+        p1 = getpass.getpass(f"[{player_name}] Please choose Rock, Paper, Scissors (or r, p, s): ").lower()
         if p1 not in choices:
             invalid_choice()
         if p1 in mapping:
@@ -81,7 +81,7 @@ def game(mode, leaderboard):
             if computer_name.strip():
                 break
             print("Name cannot be empty. Please try again.")
-        p2 = input(f"[{computer_name}] Please choose Rock, Paper, Scissors (or r, p, s): ").lower()
+        p2 = getpass.getpass(f"[{computer_name}] Please choose Rock, Paper, Scissors (or r, p, s): ").lower()
         if p2 not in choices:
            invalid_choice()
         if p2 in mapping:
