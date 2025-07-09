@@ -103,8 +103,8 @@ def determine_winner(players, mode, leaderboard):  # Line 63
 
 def repeatOrexit():
     print("Nice game!")
-    call = input("Play again? (yes/no): ").lower()
-    if call == "yes" or call == "y":
+    play_again = input("Play again? (yes/no): ").lower()
+    if play_again == "yes" or play_again == "y":
         return True
     else:
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -114,12 +114,12 @@ def repeatOrexit():
 def main():
     leaderboard = load_lb()
     mode = welcome()
-    call = True
-    while call:
+    play_again = True
+    while play_again:
         players = game(mode, leaderboard)
         os.system('cls' if os.name == 'nt' else 'clear')
         determine_winner(players, mode, leaderboard)
-        call = repeatOrexit()
+        play_again = repeatOrexit()
 
 if __name__ == "__main__": 
     main()
