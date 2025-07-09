@@ -28,7 +28,7 @@ def invalid_choice():
 def game(mode):
     if mode == 1:
         # pc = player choice
-        p1 = input("\n[Player]\nChoose Rock, Paper, Scissors (or r, p, s): ").lower()
+        p1 = input("[Player] Please choose Rock, Paper, Scissors (or r, p, s): ").lower()
         if p1 not in choices:
             invalid_choice()
         if p1 in mapping:
@@ -37,13 +37,13 @@ def game(mode):
         p2 = random.choice(valid_choices)
     elif mode == 2:
         # p1 = player 1 choice
-        p1 = input("\n[Player 1]\nChoose Rock, Paper, Scissors (or r, p, s): ").lower()
+        p1 = input("[Player 1] Please choose Rock, Paper, Scissors (or r, p, s): ").lower()
         if p1 not in choices:
             invalid_choice()
         if p1 in mapping:
             p1 = mapping[p1]
         # p2 = player 2 choice
-        p2 = input("\n[Player 2]\nChoose Rock, Paper, Scissors (or r, p, s): ").lower()
+        p2 = input("[Player 2] Please choose Rock, Paper, Scissors (or r, p, s): ").lower()
         if p2 not in choices:
            invalid_choice()
         if p2 in mapping:
@@ -75,7 +75,7 @@ def determine_winner(players, mode):
 
 def repeatOrexit():
     print("Nice game!")
-    call = input("\nDo you want to play again? (yes/no)" ).lower()
+    call = input("Play again? (yes/no): ").lower()
     if call == "yes" or call == "y":
         return True
     else:
