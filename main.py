@@ -28,13 +28,13 @@ def welcome():
     os.system('cls' if os.name == 'nt' else 'clear')
     print("Hello, this is a game Rock, Paper, Scissors made in Python!\nEnjoy the game!\n")
     input("Press Enter to start the game...\n")
-    print ("Choose your game mode:\n1. Single Player (vs Computer)\n2. Two Players\n3. Leaderboard\n")
+    print ("Choose your game mode:\n1. Single Player (vs Computer)\n2. Two Players\n3. Leaderboard\n4. Exit\n")
     try:
-         mode = int(input("Enter 1, 2 or 3: "))
-         if mode not in [1, 2, 3]:
+         mode = int(input("Enter 1, 2, 3 or 4: "))
+         if mode not in [1, 2, 3, 4]:
              raise ValueError
     except ValueError:
-        print("Invalid choice. Please enter 1, 2 or 3.")
+        print("Invalid choice. Please enter 1, 2, 3 or 4.")
         sys.exit(1)
     if mode == 1:
         print("You chose Single Player mode.")
@@ -45,6 +45,9 @@ def welcome():
         display_lb(load_lb())
         input("Press Enter to continue...")
         return welcome()
+    elif mode == 4:
+        print("You chose to exit the game.\nThanks for playing!\nGoodbye!")
+        sys.exit(0)
     return mode
 
 def invalid_choice():
@@ -53,7 +56,6 @@ def invalid_choice():
 
 def game(mode, leaderboard):
     if mode == 1:
-        # pc = player choice
         player_name = "Player"
         p1 = input("[Player] Please choose Rock, Paper, Scissors (or r, p, s): ").lower()
         if p1 not in choices:
@@ -64,16 +66,22 @@ def game(mode, leaderboard):
         p2 = random.choice(valid_choices)
         computer_name = "Computer"
     elif mode == 2:
-        player_name = input("Enter Player 1 name: ")
-        # p1 = player 1 choice
-        p1 = input("[Player 1] Please choose Rock, Paper, Scissors (or r, p, s): ").lower()
+        while True:
+            player_name = input("Enter Player 1 name: ")
+            if player_name.strip():
+                break
+            print("Name cannot be empty. Please try again.")
+        p1 = input(f"[{player_name}] Please choose Rock, Paper, Scissors (or r, p, s): ").lower()
         if p1 not in choices:
             invalid_choice()
         if p1 in mapping:
             p1 = mapping[p1]
-        computer_name = input("Enter Player 2 name: ")
-        # p2 = player 2 choice
-        p2 = input("[Player 2] Please choose Rock, Paper, Scissors (or r, p, s): ").lower()
+        while True:
+            computer_name = input("Enter Player 2 name: ")
+            if computer_name.strip():
+                break
+            print("Name cannot be empty. Please try again.")
+        p2 = input(f"[{computer_name}] Please choose Rock, Paper, Scissors (or r, p, s): ").lower()
         if p2 not in choices:
            invalid_choice()
         if p2 in mapping:
@@ -114,12 +122,17 @@ def repeatOrexit():
 def main():
     leaderboard = load_lb()
     mode = welcome()
-    play_again = True
-    while play_again:
-        players = game(mode, leaderboard)
-        os.system('cls' if os.name == 'nt' else 'clear')
-        determine_winner(players, mode, leaderboard)
-        play_again = repeatOrexit()
+    while True:
+        if mode == 3:  # Handle leaderboard mode
+            mode = welcome()
+            continue
+        play_again = True
+        while play_again:
+            players = game(mode, leaderboard)
+            os.system('cls' if os.name == 'nt' else 'clear')
+            determine_winner(players, mode, leaderboard)
+            play_again = repeatOrexit()
+        mode = welcome()
 
 if __name__ == "__main__": 
     main()
