@@ -1,33 +1,60 @@
-import os
-import sys
-import random
+import os, sys, random, json
 
 choices = ["rock","r","paper","p","scissors","s"]
 valid_choices = ["rock", "paper", "scissors"]
 mapping = {"r": "rock", "p": "paper", "s": "scissors"}
 
+def load_lb():
+    try:
+        with open("leaderboard.json", "r") as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return {}
+        
+def save_lb(leaderboard):
+    with open("leaderboard.json", "w") as file:
+        json.dump(leaderboard, file, indent=4)
+
+def display_lb(leaderboard):
+    if not leaderboard:
+        print("No scores yet!")
+        return
+    print("Leaderboard:")
+    sorted_leaderboard = sorted(leaderboard.items(), key=lambda x: x[1], reverse=True)
+    for player, wins in sorted_leaderboard:
+        print(f"{player}: {wins} wins")
+        
 def welcome():
     os.system('cls' if os.name == 'nt' else 'clear')
     print("Hello, this is a game Rock, Paper, Scissors made in Python!\nEnjoy the game!\n")
-    input("Press Enter to start the game...")
-    print ("\nChoose your game mode:\n1. Single Player (vs Computer)\n2. Two Players")
+    input("Press Enter to start the game...\n")
+    print ("Choose your game mode:\n1. Single Player (vs Computer)\n2. Two Players\n3. Leaderboard\n")
     try:
-         mode = int(input("Enter 1 or 2: "))
-         if mode not in [1, 2]:
+         mode = int(input("Enter 1, 2 or 3: "))
+         if mode not in [1, 2, 3]:
              raise ValueError
     except ValueError:
-        print("Invalid choice. Please enter 1 or 2.")
+        print("Invalid choice. Please enter 1, 2 or 3.")
         sys.exit(1)
-    print(f"You chose {'Single Player' if mode == 1 else 'Two Players'}.")    
+    if mode == 1:
+        print("You chose Single Player mode.")
+    elif mode == 2:
+        print("You chose Two Players mode.")
+    elif mode == 3:
+        print("You chose to view the Leaderboard.")
+        display_lb(load_lb())
+        input("Press Enter to continue...")
+        return welcome()
     return mode
 
 def invalid_choice():
     print("Invalid choice. Please choose Rock, Paper, Scissors (or r, p, s).")
     sys.exit(1)
 
-def game(mode):
+def game(mode, leaderboard):
     if mode == 1:
         # pc = player choice
+        player_name = "Player"
         p1 = input("[Player] Please choose Rock, Paper, Scissors (or r, p, s): ").lower()
         if p1 not in choices:
             invalid_choice()
@@ -35,43 +62,44 @@ def game(mode):
             p1 = mapping[p1]
         # cc = computer choice
         p2 = random.choice(valid_choices)
+        computer_name = "Computer"
     elif mode == 2:
+        player_name = input("Enter Player 1 name: ")
         # p1 = player 1 choice
         p1 = input("[Player 1] Please choose Rock, Paper, Scissors (or r, p, s): ").lower()
         if p1 not in choices:
             invalid_choice()
         if p1 in mapping:
             p1 = mapping[p1]
+        computer_name = input("Enter Player 2 name: ")
         # p2 = player 2 choice
         p2 = input("[Player 2] Please choose Rock, Paper, Scissors (or r, p, s): ").lower()
         if p2 not in choices:
            invalid_choice()
         if p2 in mapping:
-            p2 = mapping[p2]  
+            p2 = mapping[p2]
     else:
         print("Invalid mode selected. Please restart the game.")
         sys.exit(1)
-    players = [p1, p2]
-    return players
-
-def determine_winner(players, mode):
-    p1 = players[0]
-    p2 = players[1]
+    return [p1, p2, player_name, computer_name]
+    
+def determine_winner(players, mode, leaderboard):  # Line 63
+    p1, p2, player_name, computer_name = players  # Fix: Unpack names
     if mode == 1:
         print(f"\nPlayer chose: {p1.capitalize()}\nComputer chose: {p2.capitalize()}")
     elif mode == 2:
-        print(f"[Player 1] chose: {p1.capitalize()}\n[Player 2] chose: {p2.capitalize()}")
+        print(f"\n[{player_name}] chose: {p1.capitalize()}\n[{computer_name}] chose: {p2.capitalize()}")
     if p1 == p2:
         print("\nIt's a tie!")
     elif (p1 == "rock" and p2 == "scissors") or \
          (p1 == "paper" and p2 == "rock") or \
          (p1 == "scissors" and p2 == "paper"):
         print(f"\nPlayer 1 wins!\n{p1.capitalize()} beats {p2.capitalize()}!")
+        leaderboard[player_name] = leaderboard.get(player_name, 0) + 1  # Fix: Update leaderboard
     else:
-        if mode == 1:
-            print(f"\nComputer wins!\n{p2.capitalize()} beats {p1.capitalize()}!")
-        else:
-            print(f"\nPlayer 2 wins!\n{p2.capitalize()} beats {p1.capitalize()}!")
+        print(f"\n{'Computer' if mode == 1 else computer_name} wins!\n{p2.capitalize()} beats {p1.capitalize()}!")
+        leaderboard[computer_name] = leaderboard.get(computer_name, 0) + 1  # Fix: Update leaderboard
+    save_lb(leaderboard)  # Fix: Save leaderboard
 
 def repeatOrexit():
     print("Nice game!")
@@ -84,12 +112,13 @@ def repeatOrexit():
         return False
 
 def main():
+    leaderboard = load_lb()
     mode = welcome()
     call = True
     while call:
-        players = game(mode)
+        players = game(mode, leaderboard)
         os.system('cls' if os.name == 'nt' else 'clear')
-        determine_winner(players, mode)
+        determine_winner(players, mode, leaderboard)
         call = repeatOrexit()
 
 if __name__ == "__main__": 
